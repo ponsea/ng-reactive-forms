@@ -1,5 +1,5 @@
 import { Component }   from '@angular/core';
-import { FormGroup, FormBuilder } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'hero-detail',
@@ -14,7 +14,7 @@ export class HeroDetailComponent {
 
   createForm() {
     this.heroForm = this.fb.group({
-      name: ''
+      name: ['', Validators.required ]
     });
   }
 }
