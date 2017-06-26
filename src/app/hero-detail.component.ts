@@ -2,6 +2,7 @@ import { Component, Input, OnChanges }        from '@angular/core';
 import { FormArray, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 import { Address, Hero, states } from './data-model';
+import { HeroService } from './hero.service';
 
 @Component({
   selector: 'hero-detail',
@@ -13,7 +14,7 @@ export class HeroDetailComponent implements OnChanges {
   states = states;
   nameChangeLog: string[] = [];
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private heroService: HeroService) {
     this.createForm();
     this.logNameChange();
   }
@@ -54,4 +55,27 @@ export class HeroDetailComponent implements OnChanges {
       (value: string) => this.nameChangeLog.push(value)
     );
   }
+
+  onSubmit() {
+    this.hero = this.prepareSaveHero();
+    this.heroService.updateHero(this.hero).subscribe();
+    this.ngOnChanges();
+  }
+
+  prepareSaveHero(): Hero {
+    const formModel = this.heroForm.value;
+
+    const secretLairsDeepCopy: Address[] = formModel.secretLairs.map(
+      (address: Address) => Object.assign({}, address)
+    );
+
+    const saveHero: Hero = {
+      id: this.hero.id,
+      name: formModel.name as string,
+      addresses: secretLairsDeepCopy
+    };
+    return saveHero;
+  }
+
+  revert() { this.ngOnChanges(); }
 }
